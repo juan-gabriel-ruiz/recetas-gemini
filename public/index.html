@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generador de Recetas</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Fuente OpenDyslexic para accesibilidad -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/antijingoist/open-dyslexic/webkit.css">
+</head>
+<body>
+  <div class="container">
+    <img src="./logo.png" alt="Logo de la app" class="logo" />
+    <h1>🐩🦴🍳👨‍🍳 Generador de Recetas con Gemini</h1>
+    
+    <input type="text" id="nombrePlato" placeholder="Escribe los ingredientes (ej. sal, cebolla, carne, fideos)" />
+    <button onclick="generarReceta()">Generar receta</button>
+    <p id="status"></p>
+    <pre id="receta"></pre>
+  </div>
+
+  <script>
+    async function generarReceta() {
+      const nombrePlato = document.getElementById('nombrePlato').value;
+      const recetaContainer = document.getElementById('receta');
+      const status = document.getElementById('status');
+
+      recetaContainer.textContent = '';
+      status.textContent = 'Generando receta...';
+
+      try {
+        const res = await fetch('/generar-receta', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombrePlato })
+        });
+
+        const data = await res.json();
+
+        if (data.receta) {
+          recetaContainer.textContent = data.receta;
+          status.textContent = '';
+        } else {
+          recetaContainer.textContent = 'No se pudo generar la receta.';
+          status.textContent = '';
+        }
+      } catch (err) {
+        console.error(err);
+        status.textContent = 'Error al contactar el servidor.';
+      }
+    }
+  </script>
+</body>
+</html>
+
